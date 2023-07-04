@@ -1,5 +1,37 @@
 // 运行在 Electron 主进程 下的插件入口
 const { exec } = require("child_process");
+const { Module } = require("module");
+
+
+const original_load = Module._load;
+Module._load = (...args) => {
+    const loaded_module = original_load(...args);
+
+    if (args[0] != "electron") {
+        return loaded_module;
+    }
+
+    // Hook BrowserWindow
+    class HookedBrowserWindow extends loaded_module.BrowserWindow {
+        constructor(original_config) {
+            super({
+                ...original_config,
+                backgroundColor: "#00000000",
+                transparent: true,
+                webPreferences: {
+                    ...original_config?.webPreferences,
+                    devTools: true,
+                    webSecurity: false
+                }
+            });
+        }
+    }
+
+    return {
+        ...loaded_module,
+        BrowserWindow: HookedBrowserWindow
+    }
+}
 
 
 // 使用xprop命令设置毛玻璃背景
