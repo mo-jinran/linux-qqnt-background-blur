@@ -1,9 +1,9 @@
 {
     "manifest_version": 1,
     "type": "extension",
-    "name": "插件模板",
-    "slug": "plugin_template",
-    "description": "LiteLoaderQQNT的插件模板",
+    "name": "Linux | 背景毛玻璃",
+    "slug": "linux_qqnt_background_blur",
+    "description": "给Linux下KDE桌面环境的QQNT添加背景毛玻璃效果",
     "version": "0.1.0",
     "author": [
         {
@@ -12,13 +12,9 @@
         }
     ],
     "platform": [
-        "win32",
-        "linux",
-        "darwin"
+        "linux"
     ],
     "injects": {
-        "renderer": "./src/renderer.js",
-        "main": "./src/main.js",
-        "preload": "./src/preload.js"
+        "main": "./src/main.js"
     }
 }
