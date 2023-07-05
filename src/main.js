@@ -17,12 +17,7 @@ Module._load = (...args) => {
             super({
                 ...original_config,
                 backgroundColor: "#00000000",
-                transparent: true,
-                webPreferences: {
-                    ...original_config?.webPreferences,
-                    devTools: true,
-                    webSecurity: false
-                }
+                transparent: true
             });
         }
     }
@@ -55,6 +50,8 @@ function setBackgroundBlur(window_id, plugin) {
 // 创建窗口时触发
 function onBrowserWindowCreated(window, plugin) {
     window.once("show", () => {
+        // 设置窗口也会设置纯黑，所以需要改透明
+        window.setBackgroundColor("#00000000");
         // 给每个新开的窗口后面都加上QQ
         // 因为我发现有些窗口不带QQ这俩字符
         // 比如设置窗口就叫设置，导致获取不到窗口ID（
@@ -69,7 +66,6 @@ function onBrowserWindowCreated(window, plugin) {
                 console.log(plugin.manifest.slug, "命令运行失败", err);
                 return;
             }
-            console.log(plugin.manifest.slug, "命令运行成功", stdout || stderr);
             // 如果有多个窗口，先每行分开
             const lines = stdout.trim().split("\n");
             for (const line of lines) {
@@ -82,7 +78,6 @@ function onBrowserWindowCreated(window, plugin) {
 }
 
 
-// 这两个函数都是可选的
 module.exports = {
     onBrowserWindowCreated
 }
