@@ -1,16 +1,18 @@
 {
-    "manifest_version": 1,
+    "manifest_version": 2,
     "type": "extension",
     "name": "Linux | 背景毛玻璃",
     "slug": "linux_qqnt_background_blur",
     "description": "给Linux下KDE桌面环境的QQNT添加背景毛玻璃效果",
     "version": "0.1.2",
-    "author": [
-        {
-            "name": "沫烬染",
-            "link": "https://github.com/mo-jinran"
-        }
-    ],
+    "author": {
+        "name": "沫烬染",
+        "link": "https://github.com/mo-jinran"
+    },
+    "repository": {
+        "repo": "mo-jinran/linux-qqnt-background-blur",
+        "branch": "v2"
+    },
     "platform": [
         "linux"
     ],
