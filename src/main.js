@@ -3,7 +3,7 @@ const { exec, execSync } = require("child_process");
 const { Module } = require("module");
 
 
-// Hook BrowserWindow，设置窗口透明
+// Proxy BrowserWindow，设置窗口透明
 const original_load = Module._load;
 Module._load = (...args) => {
     const loaded_module = original_load(...args);
@@ -12,22 +12,25 @@ Module._load = (...args) => {
         return loaded_module;
     }
 
-    // Hook BrowserWindow
-    class HookedBrowserWindow extends loaded_module.BrowserWindow {
-        constructor(original_config) {
-            super({
+    let HookedBrowserWindow = new Proxy(loaded_module.BrowserWindow, {
+        construct(target, [original_config], newTarget) {
+            return Reflect.construct(target, [{
                 ...original_config,
                 backgroundColor: "#00000000",
                 transparent: true
-            });
+            }], newTarget);
         }
-    }
+    });
 
-    return {
-        ...loaded_module,
-        BrowserWindow: HookedBrowserWindow
-    }
-}
+    return new Proxy(loaded_module, {
+        get(target, property, receiver) {
+            if (property === "BrowserWindow") {
+                return HookedBrowserWindow;
+            }
+            return Reflect.get(target, property, receiver);
+        }
+    });
+};
 
 
 // 使用xprop命令设置毛玻璃背景
@@ -84,8 +87,6 @@ function onBrowserWindowCreated(window) {
 
         const interval = setInterval(() => {
             const current_ids = getWindowIdArray();
-            console.log("prev_ids：", prev_ids);
-            console.log("current_ids", current_ids);
 
             // 跟之前获取的数组一样就重新获取
             if (current_ids.toString() == prev_ids.toString()) {
