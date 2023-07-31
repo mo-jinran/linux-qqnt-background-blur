@@ -3,7 +3,7 @@
     "type": "extension",
     "name": "Linux | 背景毛玻璃",
     "slug": "linux_qqnt_background_blur",
-    "description": "给Linux下KDE桌面环境的QQNT添加背景毛玻璃效果",
+    "description": "给Linux下KDE桌面环境的QQNT添加背景毛玻璃效果（需安装wmctrl与xorg-xprop）",
     "version": "0.1.2",
     "author": [
         {
