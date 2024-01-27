@@ -3,36 +3,6 @@ const { exec, execSync } = require("child_process");
 const { Module } = require("module");
 
 
-// Proxy BrowserWindow，设置窗口透明
-const original_load = Module._load;
-Module._load = (...args) => {
-    const loaded_module = original_load(...args);
-
-    if (args[0] != "electron") {
-        return loaded_module;
-    }
-
-    let HookedBrowserWindow = new Proxy(loaded_module.BrowserWindow, {
-        construct(target, [original_config], newTarget) {
-            return Reflect.construct(target, [{
-                ...original_config,
-                backgroundColor: "#00000000",
-                transparent: true
-            }], newTarget);
-        }
-    });
-
-    return new Proxy(loaded_module, {
-        get(target, property, receiver) {
-            if (property === "BrowserWindow") {
-                return HookedBrowserWindow;
-            }
-            return Reflect.get(target, property, receiver);
-        }
-    });
-};
-
-
 // 使用xprop命令设置毛玻璃背景
 function setBackgroundBlur(window_id) {
     // 命令太长，我就给分开了
@@ -107,6 +77,4 @@ function onBrowserWindowCreated(window) {
 }
 
 
-module.exports = {
-    onBrowserWindowCreated
-}
+exports.onBrowserWindowCreated = onBrowserWindowCreated
