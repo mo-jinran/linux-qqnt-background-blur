@@ -2,7 +2,6 @@
 const { exec, execSync } = require("child_process");
 const { Module } = require("module");
 
-
 // Proxy BrowserWindow，设置窗口透明
 const original_load = Module._load;
 Module._load = (...args) => {
@@ -14,12 +13,18 @@ Module._load = (...args) => {
 
     let HookedBrowserWindow = new Proxy(loaded_module.BrowserWindow, {
         construct(target, [original_config], newTarget) {
-            return Reflect.construct(target, [{
-                ...original_config,
-                backgroundColor: "#00000000",
-                transparent: true
-            }], newTarget);
-        }
+            return Reflect.construct(
+                target,
+                [
+                    {
+                        ...original_config,
+                        backgroundColor: "#00000000",
+                        transparent: true,
+                    },
+                ],
+                newTarget
+            );
+        },
     });
 
     return new Proxy(loaded_module, {
@@ -28,10 +33,9 @@ Module._load = (...args) => {
                 return HookedBrowserWindow;
             }
             return Reflect.get(target, property, receiver);
-        }
+        },
     });
 };
-
 
 // 使用xprop命令设置毛玻璃背景
 function setBackgroundBlur(window_id) {
@@ -39,12 +43,11 @@ function setBackgroundBlur(window_id) {
     const parms = {
         id: `-id ${window_id}`,
         f: "-f _KDE_NET_WM_BLUR_BEHIND_REGION 32c",
-        set: "-set _KDE_NET_WM_BLUR_BEHIND_REGION 0x0"
-    }
+        set: "-set _KDE_NET_WM_BLUR_BEHIND_REGION 0x0",
+    };
     const set_blur_command = `xprop ${parms.id} ${parms.f} ${parms.set}`;
     exec(set_blur_command);
 }
-
 
 // 获取QQ窗口ID
 function getWindowIdArray() {
@@ -61,13 +64,10 @@ function getWindowIdArray() {
             const window_id = line.split(" ")[0];
             window_ids.push(window_id);
         }
-    }
-
-    finally {
+    } finally {
         return window_ids;
     }
 }
-
 
 // 创建窗口时触发
 let prev_ids = [];
@@ -101,12 +101,11 @@ function onBrowserWindowCreated(window) {
             }
 
             prev_ids = current_ids;
-            clearInterval(interval)
+            clearInterval(interval);
         }, 100);
     });
 }
 
-
 module.exports = {
-    onBrowserWindowCreated
-}
+    onBrowserWindowCreated,
+};
